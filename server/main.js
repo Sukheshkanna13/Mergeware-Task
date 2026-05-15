@@ -1,5 +1,5 @@
 // server/main.js
-// Publications — Tasks collection is already available from lib/tasks.js
+import { Tasks } from '../imports/api/tasks.js';
 
 Meteor.publish('tasks', function() {
   if (!this.userId) {
