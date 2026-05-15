@@ -1,0 +1,82 @@
+<template name="App">
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="app-title">
+        <span class="title-icon">✅</span>
+        Simple Todos
+      </h1>
+      <div class="header-right">
+        {{> loginButtons}}
+      </div>
+    </header>
+
+    {{#if currentUser}}
+
+      <!-- Welcome bar -->
+      <div class="welcome-bar">
+        <span>👋 Hello, <strong>{{currentUser.username}}</strong>!</span>
+        <span class="task-count">{{incompleteCount}} task(s) remaining</span>
+      </div>
+
+      <!-- Add task form -->
+      <form class="task-form" id="task-form">
+        <div class="form-row">
+          <input class="task-input" type="text" name="text" placeholder="What needs to be done?" autocomplete="off" required>
+          <select class="category-select" name="category">
+            {{#each categoryOptions}}
+              <option value="{{key}}">{{label}}</option>
+            {{/each}}
+          </select>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </form>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <label class="toggle-label">
+          <input type="checkbox" id="hide-completed" checked="{{hideCompletedAttr}}">
+          Hide completed
+        </label>
+
+        <div class="category-filters">
+          <button class="filter-pill {{activeClassAll}}" data-category="all">All</button>
+          {{#each categoryOptions}}
+            <button class="filter-pill {{activeClass}}" data-category="{{key}}" style="--pill-color: {{color}}">{{label}}</button>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Task list -->
+      {{#if hasAnyTasks}}
+        <ul class="task-list" id="task-list">
+          {{#each tasks}}
+            {{> Task}}
+          {{/each}}
+        </ul>
+      {{else}}
+        <div class="empty-state">
+          {{#if hideCompleted}}
+            <p>🎉 All done! No pending tasks.</p>
+          {{else}}
+            <p>📝 No tasks yet. Add one above!</p>
+          {{/if}}
+        </div>
+      {{/if}}
+
+    {{else}}
+
+      <!-- Logged-out landing -->
+      <div class="landing">
+        <div class="landing-card">
+          <h2>Welcome to Simple Todos</h2>
+          <p>Please sign in or create an account to manage your tasks.</p>
+          {{> loginButtons}}
+        </div>
+      </div>
+
+    {{/if}}
+
+  </div>
+</template>
