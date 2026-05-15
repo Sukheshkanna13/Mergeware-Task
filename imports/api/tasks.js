@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
+// Guard against re-initialization during hot-reload in development
 export const Tasks = new Mongo.Collection('tasks');
 
 export const CATEGORIES = {

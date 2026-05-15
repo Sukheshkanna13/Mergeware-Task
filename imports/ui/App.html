@@ -7,16 +7,18 @@
         <span class="title-icon">✅</span>
         Simple Todos
       </h1>
-      <div class="header-right">
-        {{> loginButtons}}
-      </div>
+      {{#if currentUser}}
+        <div class="header-user">
+          <span class="user-name">{{currentUser.username}}</span>
+          {{> loginButtons}}
+        </div>
+      {{/if}}
     </header>
 
     {{#if currentUser}}
 
       <!-- Welcome bar -->
       <div class="welcome-bar">
-        <span>👋 Hello, <strong>{{currentUser.username}}</strong>!</span>
         <span class="task-count">{{incompleteCount}} task(s) remaining</span>
       </div>
 
@@ -70,9 +72,13 @@
       <!-- Logged-out landing -->
       <div class="landing">
         <div class="landing-card">
-          <h2>Welcome to Simple Todos</h2>
-          <p>Please sign in or create an account to manage your tasks.</p>
-          {{> loginButtons}}
+          <div class="landing-header">
+            <h2>Welcome to Simple Todos</h2>
+            <p>Organize your tasks with ease</p>
+          </div>
+          <div class="landing-auth">
+            {{> loginButtons}}
+          </div>
         </div>
       </div>
 
