@@ -1,7 +1,7 @@
 <head>
   <title>Simple Todos</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -10,3 +10,94 @@
 <body>
   {{> App}}
 </body>
+
+<template name="App">
+  <div class="app-container">
+
+    <header class="app-header">
+      <h1 class="app-title">
+        <span class="title-icon">✅</span>
+        Simple Todos
+      </h1>
+      <div class="header-right">
+        {{> loginButtons}}
+      </div>
+    </header>
+
+    {{#if currentUser}}
+
+      <div class="welcome-bar">
+        <span>👋 Hello, <strong>{{currentUser.username}}</strong>!</span>
+        <span class="task-count">{{incompleteCount}} task(s) remaining</span>
+      </div>
+
+      <form class="task-form" id="task-form">
+        <div class="form-row">
+          <input class="task-input" type="text" name="text" placeholder="What needs to be done?" autocomplete="off" required>
+          <select class="category-select" name="category">
+            {{#each categoryOptions}}
+              <option value="{{key}}">{{label}}</option>
+            {{/each}}
+          </select>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </form>
+
+      <div class="filter-bar">
+        <label class="toggle-label">
+          <input type="checkbox" id="hide-completed">
+          Hide completed
+        </label>
+        <div class="category-filters">
+          <button class="filter-pill {{activeClassAll}}" data-category="all">All</button>
+          {{#each categoryOptions}}
+            <button class="filter-pill {{activeClass}}" data-category="{{key}}" data-color="{{color}}">{{label}}</button>
+          {{/each}}
+        </div>
+      </div>
+
+      {{#if hasAnyTasks}}
+        <ul class="task-list" id="task-list">
+          {{#each tasks}}
+            {{> Task}}
+          {{/each}}
+        </ul>
+      {{else}}
+        <div class="empty-state">
+          {{#if hideCompleted}}
+            <p>🎉 All done! No pending tasks.</p>
+          {{else}}
+            <p>📝 No tasks yet. Add one above!</p>
+          {{/if}}
+        </div>
+      {{/if}}
+
+    {{else}}
+
+      <div class="landing">
+        <div class="landing-card">
+          <h2>Welcome to Simple Todos</h2>
+          <p>Please sign in or create an account to manage your tasks.</p>
+          {{> loginButtons}}
+        </div>
+      </div>
+
+    {{/if}}
+
+  </div>
+</template>
+
+<template name="Task">
+  <li class="task-item {{checkedClass}}" data-id="{{_id}}">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
+    <input class="task-checkbox" type="checkbox" data-id="{{_id}}">
+    <span class="category-badge" data-color="{{categoryColor}}">{{categoryLabel}}</span>
+    <span class="task-text">{{text}}</span>
+    <select class="inline-category-select" data-id="{{_id}}">
+      {{#each categoryOptionsForTask}}
+        <option value="{{key}}">{{label}}</option>
+      {{/each}}
+    </select>
+    <button class="btn-delete" data-id="{{_id}}" title="Delete task">✕</button>
+  </li>
+</template>

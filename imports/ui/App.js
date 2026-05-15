@@ -2,8 +2,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import Sortable from 'sortablejs';
 
+// SortableJS is lazy-loaded in onRendered to prevent import errors
+// from blocking template registration and causing a blank page.
 import { Tasks, CATEGORIES, CATEGORY_KEYS } from '../api/tasks.js';
 
 import './Task.js';
@@ -47,13 +48,7 @@ Template.App.helpers({
     return Template.instance().hideCompleted.get();
   },
 
-  // Returns "checked" string or empty string for the checkbox attribute
-  hideCompletedAttr() {
-    return Template.instance().hideCompleted.get() ? 'checked' : null;
-  },
-
   categoryOptions() {
-    // Attach activeClass to each option so the template can use {{activeClass}}
     const active = Template.instance().activeCategory.get();
     return CATEGORY_OPTIONS.map((opt) => ({
       ...opt,
@@ -61,7 +56,6 @@ Template.App.helpers({
     }));
   },
 
-  // Returns "active" class string for the "All" pill
   activeClassAll() {
     return Template.instance().activeCategory.get() === 'all' ? 'active' : '';
   },
@@ -107,33 +101,52 @@ Template.App.events({
   },
 });
 
-// ── onRendered – SortableJS ──────────────────────────────────────────────────
+// ── onRendered ───────────────────────────────────────────────────────────────
 Template.App.onRendered(function appOnRendered() {
   const instance = this;
+
+  // Set pill colors via DOM from data-color attribute
   instance.autorun(() => {
-    const taskList = instance.find('#task-list');
-    if (!taskList) return;
-
-    if (instance._sortable) {
-      instance._sortable.destroy();
-    }
-
-    instance._sortable = Sortable.create(taskList, {
-      handle: '.drag-handle',
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      chosenClass: 'sortable-chosen',
-      onEnd(evt) {
-        const items = Array.from(evt.to.children);
-        const updates = items.map((li, index) => ({
-          _id: li.dataset.id,
-          order: index + 1,
-        }));
-        Meteor.call('tasks.reorder', updates, (err) => {
-          if (err) console.error('tasks.reorder error:', err);
-        });
-      },
+    const pills = instance.findAll('.filter-pill[data-color]');
+    pills.forEach((pill) => {
+      const color = pill.dataset.color;
+      if (color) {
+        pill.style.setProperty('--pill-color', color);
+      }
     });
+  });
+
+  // Lazy-load SortableJS — if it fails, the app still renders fine
+  import('sortablejs').then((mod) => {
+    const Sortable = mod.default;
+
+    instance.autorun(() => {
+      const taskList = instance.find('#task-list');
+      if (!taskList) return;
+
+      if (instance._sortable) {
+        instance._sortable.destroy();
+      }
+
+      instance._sortable = Sortable.create(taskList, {
+        handle: '.drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd(evt) {
+          const items = Array.from(evt.to.children);
+          const updates = items.map((li, index) => ({
+            _id: li.dataset.id,
+            order: index + 1,
+          }));
+          Meteor.call('tasks.reorder', updates, (err) => {
+            if (err) console.error('tasks.reorder error:', err);
+          });
+        },
+      });
+    });
+  }).catch((err) => {
+    console.warn('SortableJS failed to load — drag-and-drop disabled:', err);
   });
 });
 

@@ -15,3 +15,4 @@ shell-server@0.5.0
 accounts-ui@1.4.2
 accounts-password@2.3.4
 meteortesting:mocha@2.1.0
+jquery

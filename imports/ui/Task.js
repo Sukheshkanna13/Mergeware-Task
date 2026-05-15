@@ -20,30 +20,39 @@ Template.Task.helpers({
     return CATEGORIES[this.category]?.color ?? '#8e44ad';
   },
 
-  // Returns full inline style string for the category badge
-  categoryBadgeStyle() {
-    const color = CATEGORIES[this.category]?.color ?? '#8e44ad';
-    return 'background-color: ' + color;
-  },
-
   // Returns "checked" class name when task is completed
   checkedClass() {
     return this.checked ? 'checked' : '';
   },
 
-  // Returns "checked" attribute or null for the checkbox input
-  checkedAttr() {
-    return this.checked ? 'checked' : null;
-  },
-
-  // Returns category options with selectedAttr pre-computed for each
+  // Returns category options for the inline select
   categoryOptionsWithSelected() {
-    const currentCategory = this.category;
-    return CATEGORY_OPTIONS.map((opt) => ({
-      ...opt,
-      selectedAttr: opt.key === currentCategory ? 'selected' : null,
-    }));
+    return CATEGORY_OPTIONS;
   },
+});
+
+// ── onRendered — set dynamic attributes via DOM ──────────────────────────────
+Template.Task.onRendered(function () {
+  const data = this.data;
+
+  // Set checkbox checked state
+  const checkbox = this.find('.task-checkbox');
+  if (checkbox) {
+    checkbox.checked = !!data.checked;
+  }
+
+  // Set category badge background color
+  const badge = this.find('.category-badge');
+  if (badge) {
+    const color = CATEGORIES[data.category]?.color ?? '#8e44ad';
+    badge.style.backgroundColor = color;
+  }
+
+  // Set selected option in the inline category select
+  const select = this.find('.inline-category-select');
+  if (select) {
+    select.value = data.category || 'personal';
+  }
 });
 
 // ── Events ───────────────────────────────────────────────────────────────────

@@ -11,12 +11,5 @@
     "@babel/runtime": "^7.20.7",
     "meteor-node-stubs": "^1.2.5",
     "sortablejs": "^1.15.0"
-  },
-  "meteor": {
-    "mainModule": {
-      "client": "client/main.js",
-      "server": "server/main.js"
-    },
-    "testModule": "tests/main.js"
   }
 }

@@ -36,14 +36,14 @@
       <!-- Filter bar -->
       <div class="filter-bar">
         <label class="toggle-label">
-          <input type="checkbox" id="hide-completed" checked="{{hideCompletedAttr}}">
+          <input type="checkbox" id="hide-completed">
           Hide completed
         </label>
 
         <div class="category-filters">
           <button class="filter-pill {{activeClassAll}}" data-category="all">All</button>
           {{#each categoryOptions}}
-            <button class="filter-pill {{activeClass}}" data-category="{{key}}" style="--pill-color: {{color}}">{{label}}</button>
+            <button class="filter-pill {{activeClass}}" data-category="{{key}}" data-color="{{color}}">{{label}}</button>
           {{/each}}
         </div>
       </div>
